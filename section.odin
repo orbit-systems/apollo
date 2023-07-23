@@ -6,8 +6,11 @@ section_table_entry :: struct #packed {
     name_offset : u32,
     name_size   : u32,
 
+    object_index : u32, // index of associated object in object table
+
     section_offset : u32,
     section_size   : u32,
+
 }
 
 section :: union {
@@ -22,7 +25,7 @@ section_type :: enum u8 {
     program = 1,    // program
     symtab  = 2,    // symbol table
     reftab  = 3,    // reference table
-    strpool = 4,    // pool of string data 
+    strpool = 4,    // pool of string data
     meta    = 5,    // various metadata
 }
 
