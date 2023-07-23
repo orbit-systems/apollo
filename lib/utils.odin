@@ -42,6 +42,8 @@ init :: proc(obj: ^file) {
     obj.header.apollo_version_minor = APOLLO_MINOR
     obj.header.apollo_version_patch = APOLLO_PATCH
 
+
+
 }
 
 encode :: proc(obj: ^file) -> []byte {
