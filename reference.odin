@@ -11,7 +11,6 @@ reftab_entry :: struct #packed {
 }
 
 reference_type :: enum u8 {
-    invalid        = 0,         // should never happen
     pc_offset      = 1,         // signed offset from program counter
     pc_offset_div4 = 2,         // signed offset from program counter, divided by 4 (used in branches and jumps)
     absolute       = 3,         // absolute address / value of symbol

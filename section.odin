@@ -1,10 +1,11 @@
 package apollo
 
-section_table_entry :: struct #packed {
+section_info_table :: []section_info_entry
+section_info_entry :: struct #packed {
     type        : section_type,
     
-    name_offset : u32,  // metadata pool
-    name_size   : u32,
+    ident_offset : u32, // metadata pool
+    ident_size   : u32,
 
     object_index : u32, // index of associated object in object table
     // RESERVED 0xFFFF_FFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
@@ -21,6 +22,7 @@ section_type :: enum u8 {
     info     = 5,    // key-value array for storing arbitrary information
 }
 
+section_table :: []section
 section :: union {
     section_program,
     section_metapool,

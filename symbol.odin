@@ -14,20 +14,20 @@ symtab_entry :: struct #packed {
 }
 
 symbol_type :: enum u8 {
-    void     = 0,   // no type information available
-    function = 1,   // executable code
-    object   = 2,   // data/information
-    section  = 3,   // associates with a section, usually the base address of a section (for relocation)
+    void     = 1,   // no type information available
+    function = 2,   // executable code
+    object   = 3,   // data/information
+    section  = 4,   // associates with a section, usually the base address of a section (for relocation)
 }
 
 symbol_link :: enum u8 {
-    undefined = 0,  // symbol is referenced within the object but not defined
-    global    = 1,  // symbol is defined and visible to other objects
-    local     = 2,  // symbol is defined and local to the object
-    weak      = 3,  // symbol is defined but may be merged with a symbol of higher precedence
+    undefined = 1,  // symbol is referenced within the object but not defined
+    global    = 2,  // symbol is defined and visible to other objects
+    local     = 3,  // symbol is defined and local to the object
+    weak      = 4,  // symbol is defined and local to the object but may be overridden
 }
 
 reloc_type :: enum u8 {
-    absolute = 0,   // symbol value does not change
-    location = 1,   // symbol value changes based on where its associated section is placed (label)
+    absolute = 1,   // symbol value does not change
+    location = 2,   // symbol value changes based on where its associated section is placed (label)
 }

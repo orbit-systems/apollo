@@ -18,13 +18,13 @@ Apollo is Aphelion's native object code format, heavliy inspired by ELF and spec
 */
 
 file :: struct #packed {
-    header          : main_header,
-    object_table    : []object_table_entry,
-    section_table   : []section_table_entry,
-    sections        : []section,
+    header             : apollo_header,
+    object_info_table  : object_info_table,
+    section_info_table : section_info_table,
+    section_table      : section_table,
 }
 
-main_header :: struct #packed {
+apollo_header :: struct #packed {
     magic : u32,                    // 0x6F_70_61_7A   (0x7A a p o)
 
     apollo_version_major : u8,      // 1
@@ -39,7 +39,8 @@ main_header :: struct #packed {
     section_count : u32,    // number of section entries
 }
 
-object_table_entry :: struct #packed {
-    name_offset : u32,  // uses associated strpool section
-    name_size   : u32,
+object_info_table :: []object_info_entry
+object_info_entry :: struct #packed {
+    ident_offset : u32,  // metadata pool
+    ident_size   : u32,
 }
