@@ -1,7 +1,7 @@
 package apollo
 
 symtab_entry :: struct #packed {
-    ident_offset : u32,     // string pool
+    ident_offset : u32,     // metadata pool
     ident_size   : u32,
 
     value : u64,

@@ -3,7 +3,7 @@ package apollo
 section_table_entry :: struct #packed {
     type        : section_type,
     
-    name_offset : u32,
+    name_offset : u32,  // metadata pool
     name_size   : u32,
 
     object_index : u32, // index of associated object in object table
@@ -14,23 +14,23 @@ section_table_entry :: struct #packed {
 }
 
 section_type :: enum u8 {
-    program = 1,    // program
-    symtab  = 2,    // symbol table
-    reftab  = 3,    // reference table
-    strpool = 4,    // pool of string data
-    meta    = 5,    // key-value array metadata
+    program  = 1,    // program
+    symtab   = 2,    // symbol table
+    reftab   = 3,    // reference table
+    metapool = 4,    // pool of various metadata, like strings
+    info     = 5,    // key-value array for storing arbitrary information
 }
 
 section :: union {
     section_program,
-    section_strpool,
+    section_metapool,
     section_symtab,
     section_reftab,
-    section_meta,
+    section_info,
 }
 
-section_program :: struct { data    : []byte }
-section_symtab  :: struct { symbols : []symtab_entry }
-section_reftab  :: struct { refs    : []reftab_entry }
-section_strpool :: struct { data    : []byte }
-section_meta    :: struct { data    : []meta_entry }
+section_program  :: struct { data    : []byte }
+section_symtab   :: struct { symbols : []symtab_entry }
+section_reftab   :: struct { refs    : []reftab_entry }
+section_metapool :: struct { data    : []byte }
+section_info     :: struct { data    : []info_entry }
