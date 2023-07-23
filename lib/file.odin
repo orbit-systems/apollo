@@ -1,13 +1,13 @@
 package apollo_lib
 
 // this is an ABSTRACTED view of an apollo file, for easy construction.
-apollo_file :: struct {
-    header             : apollo_header,
+file :: struct {
+    header             : header,
     objects            : object_table,
     sections           : section_table,
 }
 
-apollo_header :: struct {
+header :: struct {
     magic : u32,                    // 0x6F_70_61_7A   (0x7A a p o)
 
     apollo_version_major : u8,      // 1
@@ -27,11 +27,11 @@ object :: struct {
 
 section_table :: []section
 section :: struct {
-    type        : section_type,    
-    ident : string,
+    type         : section_type,    
+    ident        : string,
     object_index : u32, // index of associated object in object table
                         // RESERVED 0xFFFF_FFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
-    section: section_data,
+    section      : section_data,
 }
 
 section_type :: enum u8 {
@@ -89,7 +89,8 @@ reference :: struct #packed {
     symbol        : ^symbol, // associated symbol
 
     section       : ^section,   // index of section the reference is in
-    offset        : u32,        // offset of the reference from the start of the section
+    byte_offset   : u32,        // offset of the reference from the start of the section
+    bit_offset    : u8,         // offset from the byte_offset
     size          : u8,         // bit width of the reference (bit width of value to replace)
 
     ref_type : reference_type,  // how to resolve references
