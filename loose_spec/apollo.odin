@@ -1,17 +1,6 @@
 package apollo
 
 /*
-                           888 888          
-                           888 888          
-                           888 888          
- 8888b.  88888b.   .d88b.  888 888  .d88b.  
-    "88b 888 "88b d88""88b 888 888 d88""88b 
-.d888888 888  888 888  888 888 888 888  888 
-888  888 888 d88P Y88..88P 888 888 Y88..88P 
-"Y888888 88888P"   "Y88P"  888 888  "Y88P"  
-         888                                
-         888                                
-         888                                
 
 Apollo is Aphelion's native object code format, heavliy inspired by ELF and specialized for Aphelion code.
 
@@ -43,4 +32,26 @@ object_info_table :: []object_info_entry
 object_info_entry :: struct #packed {
     ident_offset : u32,  // metadata pool
     ident_size   : u32,
+}
+
+section_info_table :: []section_info_entry
+section_info_entry :: struct #packed {
+    type        : section_type,
+    
+    ident_offset : u32, // metadata pool
+    ident_size   : u32,
+
+    object_index : u32, // index of associated object in object table
+    // RESERVED 0xFFFF_FFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
+
+    section_offset : u32,
+    section_size   : u32,
+}
+
+section_type :: enum u8 {
+    program  = 1,    // program
+    symtab   = 2,    // symbol table
+    reftab   = 3,    // reference table
+    metapool = 4,    // pool of various metadata, like strings
+    info     = 5,    // key-value array for storing arbitrary information
 }

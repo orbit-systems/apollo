@@ -4,7 +4,7 @@ reftab_entry :: struct #packed {
     symbol_index : u32,         // index of associated symbol
 
     section_index : u32,        // index of section the reference is in
-    offset        : u64,        // offset of the reference from the start of the section
+    offset        : u32,        // offset of the reference from the start of the section
     size          : u8,         // bit width of the reference (bit width of value to replace)
 
     ref_type : reference_type,  // how to resolve references
