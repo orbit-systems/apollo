@@ -35,7 +35,8 @@ main_header :: struct #packed {
     aphelion_version_minor : u8,
     aphelion_version_patch : u8,
 
-    object_count : u32,             // number of object entries
+    object_count  : u32,    // number of object entries
+    section_count : u32,    // number of section entries
 }
 
 object_table_entry :: struct #packed {
