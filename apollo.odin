@@ -19,8 +19,9 @@ Apollo is Aphelion's native object code format, heavliy inspired by ELF and spec
 
 file :: struct #packed {
     header          : main_header,
-    object_table   : []object_table_entry,
-    objects        : []object,
+    object_table    : []object_table_entry,
+    section_table   : []section_table_entry,
+    sections        : []section,
 }
 
 main_header :: struct #packed {
@@ -40,12 +41,4 @@ main_header :: struct #packed {
 object_table_entry :: struct #packed {
     name_offset : u32,  // uses associated strpool section
     name_size   : u32,
-
-    object_offset : u32,
-    object_size   : u32,
-}
-
-object :: struct #packed {
-    section_table   : []section_table_entry,
-    sections        : []section,
 }

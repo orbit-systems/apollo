@@ -22,8 +22,9 @@ symbol_type :: enum u8 {
 
 symbol_link :: enum u8 {
     undefined = 0,  // symbol is referenced within the object but not defined
-    local     = 1,  // symbol is defined and local to the object
-    global    = 2,  // symbol is defined and visible to other objects
+    global    = 1,  // symbol is defined and visible to other objects
+    local     = 2,  // symbol is defined and local to the object
+    weak      = 3,  // symbol is defined but may be merged with a symbol of higher precedence
 }
 
 reloc_type :: enum u8 {

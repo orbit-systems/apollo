@@ -15,6 +15,7 @@ section :: union {
     section_strpool,    // string pool - used throughout the format as a repository for string stuff
     section_symtab,
     section_reftab,
+    section_meta,
 }
 
 section_type :: enum u8 {
@@ -22,9 +23,11 @@ section_type :: enum u8 {
     symtab  = 2,    // symbol table
     reftab  = 3,    // reference table
     strpool = 4,    // pool of string data 
+    meta    = 5,    // various metadata
 }
 
 section_program :: struct { data    : []byte }
 section_symtab  :: struct { symbols : []symtab_entry }
 section_reftab  :: struct { refs    : []reftab_entry }
 section_strpool :: struct { data    : []byte }
+section_meta    :: struct { data    : []meta_entry }
