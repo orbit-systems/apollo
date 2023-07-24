@@ -14,7 +14,7 @@ file :: struct #packed {
 }
 
 apollo_header :: struct #packed {
-    magic : u32,                    // 0x6F_70_61_7A   (0x7A a p o)
+    magic : [4]u8,                  // {0xB2, 'a', 'p', 'o'}
 
     apollo_version_major : u8,      // 1
     apollo_version_minor : u8,      // 0

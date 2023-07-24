@@ -8,24 +8,18 @@ file :: struct {
 }
 
 header :: struct {
-    magic : u32,                    // 0x6F_70_61_7A   (0x7A a p o)
+    magic : [4]u8,                  // {0x7A, 'a', 'p', 'o'}
 
-    apollo_version_major : u8,      // 1
-    apollo_version_minor : u8,      // 0
-    apollo_version_patch : u8,      // 0
-
-    aphelion_version_major : u8,
-    aphelion_version_minor : u8,
-    aphelion_version_patch : u8,
-
+    apollo_version   : [3]u8,
+    aphelion_version : [3]u8,
 }
 
-object_table :: []object
+object_table :: [dynamic]object
 object :: struct {
     ident : string,
 }
 
-section_table :: []section
+section_table :: [dynamic]section
 section :: struct {
     type         : section_type,    
     ident        : string,
@@ -63,7 +57,7 @@ symbol :: struct #packed {
     type          : symbol_type,    // type of associated data
     link          : symbol_link,    // local or global
     reloc_type    : reloc_type,     // how should the symbol's value change during linking
-    section       : ^section,       // associated section
+    section       : u32,            // associated section index
 }
 
 symbol_type :: enum u8 {
@@ -88,7 +82,7 @@ reloc_type :: enum u8 {
 reference :: struct #packed {
     symbol        : ^symbol, // associated symbol
 
-    section       : ^section,   // index of section the reference is in
+    section       : u32,        // index of section the reference is in
     byte_offset   : u32,        // offset of the reference from the start of the section
     bit_offset    : u8,         // offset from the byte_offset
     size          : u8,         // bit width of the reference (bit width of value to replace)

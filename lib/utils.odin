@@ -12,54 +12,31 @@ APOLLO_PATCH :: 0
 
 grow  :: bytes.buffer_grow
 read  :: bytes.buffer_read_at
-write :: bytes.buffer_write_at
 
 write_u32_at :: proc(buf: ^bytes.Buffer, i: u32, offset: int) {
     x := (transmute([4]byte)i)
-    write(buf, x[:], offset)
+    bytes.buffer_write_at(buf, x[:], offset)
 }
 
-write_u32 :: proc(buf: ^bytes.Buffer, i: u32) {
-    x := (transmute([4]byte)i)
-    bytes.buffer_write(buf, x[:])
+
+write :: proc(buf: ^bytes.Buffer, i: $T) {
+    i := i
+    bytes.buffer_write_ptr(buf, &i, size_of(i))
 }
 
 write_byte :: bytes.buffer_write_byte
 
 write_byte_at :: proc(buf: ^bytes.Buffer, i: byte, offset: int) {
     x := (transmute([1]byte)i)
-    write(buf, x[:], offset)
+    bytes.buffer_write_at(buf, x[:], offset)
 }
 
 init :: proc(obj: ^file) {
 
     // init header
-    obj.header.magic = 0x6F_70_61_7A
-    obj.header.aphelion_version_major = APHELION_MAJOR
-    obj.header.aphelion_version_minor = APHELION_MINOR
-    obj.header.aphelion_version_patch = APHELION_PATCH
-    obj.header.apollo_version_major = APOLLO_MAJOR
-    obj.header.apollo_version_minor = APOLLO_MINOR
-    obj.header.apollo_version_patch = APOLLO_PATCH
-
-
+    obj.header.magic            = {0xB2, 'a', 'p', 'o'}
+    obj.header.apollo_version   = {1, 0, 0}
+    obj.header.aphelion_version = {0, 3, 0}
 
 }
 
-encode :: proc(obj: ^file) -> []byte {
-
-    bin : bytes.Buffer
-    
-    // write header
-    write_u32(&bin, obj.header.magic)
-    write_byte(&bin, obj.header.aphelion_version_major)
-    write_byte(&bin, obj.header.aphelion_version_minor)
-    write_byte(&bin, obj.header.aphelion_version_patch)
-    write_byte(&bin, obj.header.apollo_version_major)
-    write_byte(&bin, obj.header.apollo_version_minor)
-    write_byte(&bin, obj.header.apollo_version_patch)
-    write_u32(&bin, cast(u32) len(obj.objects))
-    write_u32(&bin, cast(u32) len(obj.sections))
-
-    return bytes.buffer_to_bytes(&bin)
-}
