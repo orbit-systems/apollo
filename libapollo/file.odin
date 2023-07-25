@@ -1,6 +1,6 @@
-package apollo_lib
+package libapollo
 
-// this is an ABSTRACTED view of an apollo file, for easy construction.
+// this is an ABSTRACTED view of an apollo file, for easy manipulation
 file :: struct {
     header             : header,
     objects            : object_table,
@@ -8,8 +8,6 @@ file :: struct {
 }
 
 header :: struct {
-    magic : [4]u8,                  // {0x7A, 'a', 'p', 'o'}
-
     apollo_version   : [3]u8,
     aphelion_version : [3]u8,
 }
@@ -17,14 +15,16 @@ header :: struct {
 object_table :: [dynamic]object
 object :: struct {
     ident : string,
+    ident_offset : u32, // offset in metapool - only used in encoding
 }
 
 section_table :: [dynamic]section
 section :: struct {
     type         : section_type,    
     ident        : string,
+    ident_offset : u32, // offset in metapool - only used in encoding
     object_index : u32, // index of associated object in object table
-                        // RESERVED 0xFFFF_FFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
+                        // RESERVED 0xFFFFFFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
     section      : section_data,
 }
 
@@ -40,6 +40,7 @@ section_data :: union {
     program,
     symtab,
     reftab,
+    metapool,
     info,
 }
 
@@ -47,9 +48,11 @@ program  :: []byte
 symtab   :: []symbol
 reftab   :: []reference
 info     :: []info_entry
+metapool :: distinct []byte
 
-symbol :: struct #packed {
+symbol :: struct {
     ident : string,
+    ident_offset : u32, // offset in metapool - don't set (overwritten by encoder anyways)
 
     value : u64,
     size  : u32,    // size of the associated data, if necessary
@@ -57,7 +60,7 @@ symbol :: struct #packed {
     type          : symbol_type,    // type of associated data
     link          : symbol_link,    // local or global
     reloc_type    : reloc_type,     // how should the symbol's value change during linking
-    section       : u32,            // associated section index
+    section_index : u32,            // associated section index
 }
 
 symbol_type :: enum u8 {
@@ -76,11 +79,11 @@ symbol_link :: enum u8 {
 
 reloc_type :: enum u8 {
     absolute = 1,   // symbol value does not change
-    location = 2,   // symbol value changes based on where its associated section is placed (label)
+    location = 2,   // symbol value is an offset from the base address of its section
 }
 
-reference :: struct #packed {
-    symbol        : ^symbol, // associated symbol
+reference :: struct {
+    symbol_index  : u32,        // associated symbol index
 
     section       : u32,        // index of section the reference is in
     byte_offset   : u32,        // offset of the reference from the start of the section
@@ -96,7 +99,9 @@ reference_type :: enum u8 {
     absolute       = 3,         // absolute address / value of symbol
 }
 
-info_entry :: struct #packed {
+info_entry :: struct {
     key : string,
     value : string,
+    key_offset : u32, // offset in metapool - only used in encoding
+    value_offset : u32, // offset in metapool - only used in encoding
 }
