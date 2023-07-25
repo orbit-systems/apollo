@@ -19,8 +19,7 @@ object :: struct {
 }
 
 section_table :: [dynamic]section
-section :: struct {
-    type         : section_type,    
+section :: struct { 
     ident        : string,
     ident_offset : u32, // offset in metapool - only used in encoding
     object_index : u32, // index of associated object in object table
@@ -29,6 +28,7 @@ section :: struct {
 }
 
 section_type :: enum u8 {
+    invalid  = 0,
     program  = 1,    // program
     symtab   = 2,    // symbol table
     reftab   = 3,    // reference table
@@ -90,7 +90,7 @@ reference :: struct {
     bit_offset    : u8,         // offset from the byte_offset
     size          : u8,         // bit width of the reference (bit width of value to replace)
 
-    ref_type : reference_type,  // how to resolve references
+    type : reference_type,  // how to resolve references
 }
 
 reference_type :: enum u8 {

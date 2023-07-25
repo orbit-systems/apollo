@@ -1,7 +1,6 @@
 package lmao
 
 import apo "libapollo"
-import bruh "loose_spec"
 import "core:fmt"
 import "core:os"
 
@@ -9,13 +8,10 @@ main :: proc() {
     obj : apo.file
 
     apo.init(&obj)
-    
-    
 
     append(&(obj.objects), apo.object{ident = "bruh"})
 
     append(&(obj.sections), apo.section{
-        type         = .info,
         ident        = "_meta_",
         object_index = 0,
         section = apo.info({
@@ -30,15 +26,10 @@ main :: proc() {
     })
 
     append(&(obj.sections), apo.section{
-        type         = .program,
         ident        = ".data",
         object_index = 0,
         section = apo.program({'p', 'r', 'o', 'g', 'r', 'a', 'm'}),
     })
 
-    fmt.printf("%#v\n", obj)
-
     os.write_entire_file("out.bin", apo.encode(&obj))
-
-    fmt.printf("%#v\n", obj)
 }

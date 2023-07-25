@@ -18,7 +18,6 @@ encode :: proc(file_in: ^file) -> []byte {
     // compile and add metapool
     metapool_buffer : bytes.Buffer
     append(&(obj.sections), section{
-        type         = .metapool,
         ident        = "",
         object_index = 0xFFFFFFFF,
     })
@@ -39,7 +38,7 @@ encode :: proc(file_in: ^file) -> []byte {
         }
         // add and record symbol identifiers
         for &s in obj.sections {
-            if s.type != .symtab {
+            if get_section_type(s) != .symtab {
                 continue
             }
             for &sym in s.section.(symtab) {
@@ -50,7 +49,7 @@ encode :: proc(file_in: ^file) -> []byte {
         }
         // add and record info entries
         for &s in obj.sections {
-            if s.type != .info {
+            if get_section_type(s) != .info {
                 continue
             }
             for &info in s.section.(info) {
@@ -87,7 +86,7 @@ encode :: proc(file_in: ^file) -> []byte {
     {
         running_pos : u32 = 0
         for s in obj.sections {
-            write(bin, u8(s.type))
+            write(bin, u8(get_section_type(s)))
 
             write(bin, s.ident_offset)
             write(bin, cast(u32) len(s.ident))
@@ -105,11 +104,34 @@ encode :: proc(file_in: ^file) -> []byte {
             case program:
                 write_bytes(bin, transmute([]u8) s.section.(program))
             case symtab:
-                
+                for sym in s.section.(symtab) {
+                    write(bin, sym.ident_offset)
+                    write(bin, cast(u32) len(sym.ident))
+                    write(bin, sym.value)
+                    write(bin, sym.size)
+                    write(bin, cast(u8) sym.type)
+                    write(bin, cast(u8) sym.link)
+                    write(bin, cast(u8) sym.reloc_type)
+                    write(bin, sym.section_index)
+                }
             case reftab:
+                for ref in s.section.(reftab) {
+                    write(bin, ref.symbol_index)
+                    write(bin, ref.symbol_index)
+                    write(bin, ref.byte_offset)
+                    write(bin, ref.bit_offset)
+                    write(bin, ref.size)
+                    write(bin, cast(u8) ref.type)
+                }
             case metapool:
                 write_bytes(bin, transmute([]u8) s.section.(metapool))
-            case info:   
+            case info:
+                for pair in s.section.(info) {
+                    write(bin, pair.key_offset)
+                    write(bin, cast(u32) len(pair.key))
+                    write(bin, pair.value_offset)
+                    write(bin, cast(u32) len(pair.value))
+                }
             }
         }
     }
@@ -129,4 +151,16 @@ get_binary_size :: proc(sec: section) -> (size: u32) {
     }
     
     return
+}
+
+get_section_type :: proc(sec: section) -> section_type {
+    switch type in sec.section {
+    case program:   return .program
+    case symtab:    return .symtab
+    case reftab:    return .reftab
+    case metapool:  return .metapool
+    case info:      return .info
+    }
+    
+    return .invalid
 }
