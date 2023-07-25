@@ -23,9 +23,9 @@ write :: proc(buf: ^bytes.Buffer, i: $T) {
 
 init :: proc(obj: ^file) {
 
-
     // init header
     obj.header.apollo_version   = {APHELION_MAJOR, APHELION_MINOR, APHELION_PATCH}
     obj.header.aphelion_version = {APOLLO_MAJOR, APOLLO_MINOR, APOLLO_PATCH}
+
 }
 
