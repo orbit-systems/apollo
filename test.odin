@@ -26,9 +26,21 @@ main :: proc() {
     })
 
     append(&(obj.sections), apo.section{
+        ident        = ".text",
+        object_index = 0,
+        section = apo.program({'p', 'r', 'o', 'g', 'r', 'a', 'm', 1, 1, 1}),
+    })
+
+    append(&(obj.sections), apo.section{
         ident        = ".data",
         object_index = 0,
-        section = apo.program({'p', 'r', 'o', 'g', 'r', 'a', 'm'}),
+        section = apo.program({'d', 'a', 't', 'a', '_', '/', '\\', 1, 1, 1}),
+    })
+
+    append(&(obj.sections), apo.section{
+        ident        = "",
+        object_index = 0,
+        section = apo.symtab({}),
     })
 
     os.write_entire_file("out.bin", apo.encode(&obj))
