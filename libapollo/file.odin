@@ -15,14 +15,14 @@ header :: struct {
 object_table :: [dynamic]object
 object :: struct {
     ident : string,
-    ident_offset : u32, // offset in metapool - only used in encoding
+    ident_offset : u64, // offset in metapool - only used in encoding
 }
 
 section_table :: [dynamic]section
 section :: struct { 
     ident        : string,
-    ident_offset : u32, // offset in metapool - only used in encoding
-    object_index : u32, // index of associated object in object table
+    ident_offset : u64, // offset in metapool - only used in encoding
+    obj_index    : u64, // index of associated object in object table
                         // RESERVED 0xFFFFFFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
     section      : section_data,
 }
@@ -30,10 +30,11 @@ section :: struct {
 section_type :: enum u8 {
     invalid  = 0,
     program  = 1,    // program
-    symtab   = 2,    // symbol table
-    reftab   = 3,    // reference table
-    metapool = 4,    // pool of various metadata, like strings
-    info     = 5,    // key-value array for storing arbitrary information
+    blank    = 2,    // bss
+    info     = 3,    // key-value array for storing arbitrary information
+    symtab   = 4,    // symbol table
+    reftab   = 5,    // reference table
+    metapool = 6,    // pool of various metadata, like strings
 }
 
 section_data :: union {
@@ -52,15 +53,15 @@ metapool :: distinct []byte
 
 symbol :: struct {
     ident : string,
-    ident_offset : u32, // offset in metapool - don't set (overwritten by encoder anyways)
+    ident_offset : u64, // offset in metapool - don't set (overwritten by encoder anyways)
 
     value : u64,
-    size  : u32,    // size of the associated data, if necessary
+    size  : u64,    // size of the associated data, if necessary
 
     type          : symbol_type,    // type of associated data
     link          : symbol_link,    // local or global
     reloc_type    : reloc_type,     // how should the symbol's value change during linking
-    section_index : u32,            // associated section index
+    section_index : u64,            // associated section index
 }
 
 symbol_type :: enum u8 {
@@ -85,8 +86,8 @@ reloc_type :: enum u8 {
 reference :: struct {
     symbol_index  : u32,        // associated symbol index
 
-    section       : u32,        // index of section the reference is in
-    byte_offset   : u32,        // offset of the reference from the start of the section
+    section       : u64,        // index of section the reference is in
+    byte_offset   : u64,        // offset of the reference from the start of the section
     bit_offset    : u8,         // offset from the byte_offset
     size          : u8,         // bit width of the reference (bit width of value to replace)
 
@@ -102,6 +103,6 @@ reference_type :: enum u8 {
 info_entry :: struct {
     key : string,
     value : string,
-    key_offset : u32, // offset in metapool - only used in encoding
-    value_offset : u32, // offset in metapool - only used in encoding
+    key_offset : u64, // offset in metapool - only used in encoding
+    value_offset : u64, // offset in metapool - only used in encoding
 }

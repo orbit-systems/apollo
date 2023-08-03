@@ -19,22 +19,22 @@ encode :: proc(file_in: ^file) -> []byte {
     metapool_buffer : bytes.Buffer
     append(&(obj.sections), section{
         ident        = "",
-        object_index = 0xFFFFFFFF,
+        obj_index = 0xFFFFFFFF,
     })
     
     {
-        running_pos : u32 = 0
+        running_pos : u64 = 0
         // add and record object identifiers
         for &o in obj.objects {
             bytes.buffer_write_string(&metapool_buffer, o.ident)
             o.ident_offset = running_pos    // record position in metapool
-            running_pos += cast(u32) len(o.ident)
+            running_pos += cast(u64) len(o.ident)
         }
         // add and record section identifiers
         for &s in obj.sections {
             bytes.buffer_write_string(&metapool_buffer, s.ident)
             s.ident_offset = running_pos    // record position in metapool
-            running_pos += cast(u32) len(s.ident)
+            running_pos += cast(u64) len(s.ident)
         }
         // add and record symbol identifiers
         for &s in obj.sections {
@@ -44,7 +44,7 @@ encode :: proc(file_in: ^file) -> []byte {
             for &sym in s.section.(symtab) {
                 bytes.buffer_write_string(&metapool_buffer, sym.ident)
                 sym.ident_offset = running_pos  // record position in metapool
-                running_pos += cast(u32) len(sym.ident)
+                running_pos += cast(u64) len(sym.ident)
             }
         }
         // add and record info entries
@@ -55,41 +55,38 @@ encode :: proc(file_in: ^file) -> []byte {
             for &info in s.section.(info) {
                 bytes.buffer_write_string(&metapool_buffer, info.key)
                 info.key_offset = running_pos  // record position in metapool
-                running_pos += cast(u32) len(info.key)
+                running_pos += cast(u64) len(info.key)
 
                 bytes.buffer_write_string(&metapool_buffer, info.value)
                 info.value_offset = running_pos  // record position in metapool
-                running_pos += cast(u32) len(info.value)
+                running_pos += cast(u64) len(info.value)
             }
         }
     }
     obj.sections[len(obj.sections)-1].section = metapool(bytes.buffer_to_bytes(&metapool_buffer))
-
-    fmt.println("b")
-
 
 
     // write header
     write_bytes(bin, []u8{0xB2, 'a', 'p', 'o'})
     write(bin, obj.header.apollo_version)
     write(bin, obj.header.aphelion_version)
-    write(bin, cast(u32) len(obj.objects))
-    write(bin, cast(u32) len(obj.sections))
+    write(bin, cast(u64) len(obj.objects))
+    write(bin, cast(u64) len(obj.sections))
     
     // write object info table
     for o in obj.objects {
         write(bin, o.ident_offset)
-        write(bin, cast(u32) len(o.ident))
+        write(bin, cast(u64) len(o.ident))
     }
 
     // write section info table
     {
-        running_pos : u32 = 0
+        running_pos : u64 = 0
         for s in obj.sections {
             write(bin, u8(get_section_type(s)))
 
             write(bin, s.ident_offset)
-            write(bin, cast(u32) len(s.ident))
+            write(bin, cast(u64) len(s.ident))
 
             write(bin, running_pos)
             write(bin, get_binary_size(s))
@@ -106,7 +103,7 @@ encode :: proc(file_in: ^file) -> []byte {
             case symtab:
                 for sym in s.section.(symtab) {
                     write(bin, sym.ident_offset)
-                    write(bin, cast(u32) len(sym.ident))
+                    write(bin, cast(u64) len(sym.ident))
                     write(bin, sym.value)
                     write(bin, sym.size)
                     write(bin, cast(u8) sym.type)
@@ -128,9 +125,9 @@ encode :: proc(file_in: ^file) -> []byte {
             case info:
                 for pair in s.section.(info) {
                     write(bin, pair.key_offset)
-                    write(bin, cast(u32) len(pair.key))
+                    write(bin, cast(u64) len(pair.key))
                     write(bin, pair.value_offset)
-                    write(bin, cast(u32) len(pair.value))
+                    write(bin, cast(u64) len(pair.value))
                 }
             }
         }
@@ -140,14 +137,14 @@ encode :: proc(file_in: ^file) -> []byte {
 }
 
 @(private = "file")
-get_binary_size :: proc(sec: section) -> (size: u32) {
+get_binary_size :: proc(sec: section) -> (size: u64) {
     
     switch type in sec.section {
-    case program:   size += cast(u32) len(sec.section.(program))
-    case symtab:    size += cast(u32) len(sec.section.(symtab))   * 27
-    case reftab:    size += cast(u32) len(sec.section.(reftab))   * 15
-    case metapool:  size += cast(u32) len(sec.section.(metapool))
-    case info:      size += cast(u32) len(sec.section.(info))     * 16
+    case program:   size += cast(u64) len(sec.section.(program))
+    case symtab:    size += cast(u64) len(sec.section.(symtab))   * 27
+    case reftab:    size += cast(u64) len(sec.section.(reftab))   * 15
+    case metapool:  size += cast(u64) len(sec.section.(metapool))
+    case info:      size += cast(u64) len(sec.section.(info))     * 16
     }
     
     return

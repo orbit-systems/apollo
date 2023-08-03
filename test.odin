@@ -40,7 +40,15 @@ main :: proc() {
     append(&(obj.sections), apo.section{
         ident        = "",
         object_index = 0,
-        section = apo.symtab({}),
+        section = apo.symtab({{
+            ident = "b",
+            value = 10,
+            size  = 0,
+            type  = .void,
+            link  = .local,
+            reloc_type = .location,
+            section_index = 1,
+        }}),
     })
 
     os.write_entire_file("out.bin", apo.encode(&obj))

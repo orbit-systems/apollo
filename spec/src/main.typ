@@ -162,7 +162,7 @@ Apollo supports 6 kinds of sections:
 ```odin
     e_section_type :: enum u8 {
         program  = 1,
-        bss      = 2,
+        blank    = 2,
         info     = 3,
         symtab   = 4,
         reftab   = 5,
