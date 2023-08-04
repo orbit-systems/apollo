@@ -22,19 +22,28 @@ write :: proc(buf: ^bytes.Buffer, i: $T) {
 
 init :: proc{init_noargs, init_versions}
 
-init_noargs :: proc(obj: ^apollo_file) {
+init_noargs :: proc(mod: ^apollo_file) {
 
     // init header
-    obj.header.apollo_version   = {APHELION_MAJOR, APHELION_MINOR, APHELION_PATCH}
-    obj.header.aphelion_version = {APOLLO_MAJOR, APOLLO_MINOR, APOLLO_PATCH}
+    mod.header.apollo_version   = {APHELION_MAJOR, APHELION_MINOR, APHELION_PATCH}
+    mod.header.aphelion_version = {APOLLO_MAJOR, APOLLO_MINOR, APOLLO_PATCH}
 
 }
 
-init_versions :: proc(obj: ^apollo_file, apollo_version, aphelion_version: [3]u8) {
+init_versions :: proc(mod: ^apollo_file, apollo_version, aphelion_version: [3]u8) {
 
     // init header
-    obj.header.apollo_version   = apollo_version
-    obj.header.aphelion_version = aphelion_version
+    mod.header.apollo_version   = apollo_version
+    mod.header.aphelion_version = aphelion_version
 
 }
 
+add_object :: proc(mod: ^apollo_file, identifier: string) -> u64 {
+    append(&(mod.objects), object{identifier})
+    return u64(len(mod.objects)) - 1
+}
+
+add_section :: proc(mod: ^apollo_file, s: section) -> u64 {
+    append(&(mod.sections), s)
+    return u64(len(mod.sections)) - 1
+}

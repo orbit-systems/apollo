@@ -1,6 +1,6 @@
 package libapollo
 
-// this is an ABSTRACTED view of an apollo file, for easy manipulation
+// abstract structure of an apollo file for easier manipulation / construction
 apollo_file :: struct {
     header             : header,
     objects            : object_table,
@@ -19,19 +19,18 @@ object :: struct {
 
 section_table :: [dynamic]section
 section :: struct { 
-    ident        : string,
-    obj_index    : u64, // index of associated object in object table
-                        // RESERVED 0xFFFFFFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
-    section      : section_data,
+    ident     : string,
+    obj_index : u64,
+    section   : section_data,
 }
 
 section_type :: enum u8 {
-    program  = 1,    // program
-    blank    = 2,    // bss
-    info     = 3,    // key-value array for storing arbitrary information
-    symtab   = 4,    // symbol table
-    reftab   = 5,    // reference table
-    metapool = 6,    // pool of various metadata, like strings
+    program  = 1,
+    blank    = 2,
+    info     = 3,
+    symtab   = 4,
+    reftab   = 5,
+    metapool = 6,
 }
 
 section_data :: union {
@@ -52,56 +51,53 @@ metapool :: distinct []byte
 
 symbol :: struct {
     ident : string,
-    ident_offset : u64, // offset in metapool - don't set (overwritten by encoder anyways)
 
     value : u64,
-    size  : u64,    // size of the associated data, if necessary
+    size  : u64,
 
-    type          : symbol_type,    // type of associated data
-    link          : symbol_link,    // local or global
-    reloc_type    : reloc_type,     // how should the symbol's value change during linking
-    section_index : u64,            // associated section index
+    type          : symbol_type,
+    link          : symbol_link,
+    reloc_type    : reloc_type,
+    section_index : u64,
 }
 
 symbol_type :: enum u8 {
-    void     = 1,   // no type information available
-    function = 2,   // executable code
-    object   = 3,   // data/information
-    section  = 4,   // associates with a section, usually the base address of a section (for relocation)
+    void     = 1,
+    function = 2,
+    object   = 3,
+    section  = 4,
 }
 
 symbol_link :: enum u8 {
-    undefined = 1,  // symbol is referenced within the object but not defined
-    global    = 2,  // symbol is defined and visible to other objects
-    local     = 3,  // symbol is defined and local to the object
-    weak      = 4,  // symbol is defined and local to the object but may be overridden
+    undefined = 1,
+    global    = 2,
+    local     = 3,
+    weak      = 4,
 }
 
 reloc_type :: enum u8 {
-    absolute = 1,   // symbol value does not change
-    location = 2,   // symbol value is an offset from the base address of its section
+    absolute = 1,
+    location = 2,
 }
 
 reference :: struct {
-    symbol_index  : u32,        // associated symbol index
+    symbol_index  : u64,
 
-    section       : u64,        // index of section the reference is in
-    byte_offset   : u64,        // offset of the reference from the start of the section
-    bit_offset    : u8,         // offset from the byte_offset
-    size          : u8,         // bit width of the reference (bit width of value to replace)
+    section       : u64,
+    byte_offset   : u64,
+    bit_offset    : u8,
+    size          : u8,
 
-    type : reference_type,  // how to resolve references
+    type : reference_type,
 }
 
 reference_type :: enum u8 {
-    pc_offset      = 1,         // signed offset from program counter
-    pc_offset_div4 = 2,         // signed offset from program counter, divided by 4 (used in branches and jumps)
-    absolute       = 3,         // absolute address / value of symbol
+    pc_offset      = 1,
+    pc_offset_div4 = 2,
+    absolute       = 3,
 }
 
 info_entry :: struct {
     key : string,
     value : string,
-    key_offset : u64, // offset in metapool - only used in encoding
-    value_offset : u64, // offset in metapool - only used in encoding
 }

@@ -332,7 +332,7 @@ The reference table is an array of reference table entries:
 )
 #linebreak()
 ```odin
-    e_ref_type :: enum {
+    e_ref_type :: enum u8 {
         pc_offset      = 1,
         pc_offset_div4 = 2,
         absolute       = 3,

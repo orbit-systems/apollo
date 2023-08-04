@@ -7,9 +7,11 @@ import "core:os"
 main :: proc() {
     using fmt
 
-    obj : apo.apollo_file
+    mod : apo.apollo_file
 
-    apo.init(&obj)
+    apo.init(&mod)
 
-    //os.write_entire_file("out.bin", apo.encode(&obj))
+    apo.add_object(&mod, "object1")
+
+    os.write_entire_file("out.bin", apo.encode(&mod))
 }
