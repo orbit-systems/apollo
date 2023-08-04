@@ -20,12 +20,21 @@ write :: proc(buf: ^bytes.Buffer, i: $T) {
     bytes.buffer_write_ptr(buf, &i, size_of(i))
 }
 
+init :: proc{init_noargs, init_versions}
 
-init :: proc(obj: ^file) {
+init_noargs :: proc(obj: ^apollo_file) {
 
     // init header
     obj.header.apollo_version   = {APHELION_MAJOR, APHELION_MINOR, APHELION_PATCH}
     obj.header.aphelion_version = {APOLLO_MAJOR, APOLLO_MINOR, APOLLO_PATCH}
+
+}
+
+init_versions :: proc(obj: ^apollo_file, apollo_version, aphelion_version: [3]u8) {
+
+    // init header
+    obj.header.apollo_version   = apollo_version
+    obj.header.aphelion_version = aphelion_version
 
 }
 

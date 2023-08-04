@@ -1,7 +1,7 @@
 package libapollo
 
 // this is an ABSTRACTED view of an apollo file, for easy manipulation
-file :: struct {
+apollo_file :: struct {
     header             : header,
     objects            : object_table,
     sections           : section_table,
@@ -15,20 +15,17 @@ header :: struct {
 object_table :: [dynamic]object
 object :: struct {
     ident : string,
-    ident_offset : u64, // offset in metapool - only used in encoding
 }
 
 section_table :: [dynamic]section
 section :: struct { 
     ident        : string,
-    ident_offset : u64, // offset in metapool - only used in encoding
     obj_index    : u64, // index of associated object in object table
                         // RESERVED 0xFFFFFFFF for sections not tied to a specific object (sym/reftab, string pool, etc.)
     section      : section_data,
 }
 
 section_type :: enum u8 {
-    invalid  = 0,
     program  = 1,    // program
     blank    = 2,    // bss
     info     = 3,    // key-value array for storing arbitrary information
@@ -39,13 +36,15 @@ section_type :: enum u8 {
 
 section_data :: union {
     program,
+    blank,
+    info,
     symtab,
     reftab,
     metapool,
-    info,
 }
 
-program  :: []byte
+program  :: distinct []byte
+blank    :: distinct []byte
 symtab   :: []symbol
 reftab   :: []reference
 info     :: []info_entry
