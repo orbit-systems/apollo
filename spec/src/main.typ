@@ -12,7 +12,7 @@
 #counter(page).update(0)
 #set page(numbering: "1")
 
-#show raw: set text(font: "JetBrains Mono", weight: 500)
+#show raw: set text(font: "Fira Code", weight: 500)
 #set table(stroke: (join: "bevel", thickness: 0.5pt))
 #show table: set text(size: 9pt)
 #set figure(kind: "figure", supplement: "Figure")
@@ -39,7 +39,7 @@
     it
 }
 
-#let jbm(t) = text(font: "JetBrains Mono")[#t]
+#let jbm(t) = text(font: "Fira Code")[#t]
 
 #text(size: 12pt)[
     #outline(
