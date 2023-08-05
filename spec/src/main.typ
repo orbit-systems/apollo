@@ -351,7 +351,8 @@ The reference table is an array of reference table entries:
 )
 
 === `metapool` | Metadata Pool
-The metadata pool is not structured like the other sections. 
+The metadata pool is not explicitly structured, like the other sections. 
 It is a repository of raw data, most often in the form of text, though this is not enforced.
 The metadata pool stores the data for all strings used throughout the file, such as object, section, and symbol identifiers.
-It also stores keys and values used in an information section, where the value may be an integer or other data type/structure. 
+It also stores keys and values used in an information section, where the value may be an integer or other data type/structure.
+The metadata pool is permitted to be optimized and bytes may belong to multiple data items (ex. two strings, `"object_one"` and `"this_object"` may overlap), so information should be extracted/detangled before editing, and the metadata pool should be rebuilt afterwards.
