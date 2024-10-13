@@ -95,7 +95,7 @@ int y;
 int z = 1;
 ```
 
-extract long expressions out to variables if they're re-used.
+extract long expressions out to variables if they're re-used at all.
 ```c
 // bad
 if (expr.as_binop->rhs.type == expr.as_binop->lhs.type) {
