@@ -27,7 +27,7 @@ case 2:
 - use `snake_case` for variables, functions, and structure fields.
 - use `PascalCase` for new types.
 - use `SCREAMING_SNAKE_CASE` for `#define`'d constants and enums.
-- macros should also use this case, but some exceptions are made for keyword mods like `for_range` that supplement language features.
+- macros should also use this case, but some exceptions are made for keyword mods like `for_range` that supplement language features, or for inline function spoofing
 
 ## comments
 prefer line comments (`// this`) in almost every case, except when a large
@@ -58,9 +58,11 @@ typedef struct MyStructType MyStructType;
 ```
 
 ### enums
-only use `enum` to declare constants, never a type to go with them. To store the enum, use a defined-size integer type, especially in data structures.
+only use `enum` to declare constants. to store the enum, use a defined-size integer type, especially in data structures.
+
+Although not required, enums may have a type name for a better debugging experience.
 ```c
-enum {
+enum TokenKind {
     TOKEN_PLUS,
     TOKEN_MINUS,
     TOKEN_NUMBER,
@@ -92,7 +94,7 @@ int y;
 int z = 1;
 ```
 
-extract long expressions out to variables when possible, especially if they're re-used.
+extract long expressions out to variables if they're re-used.
 ```c
 // bad
 if (expr.as_binop->rhs.type == expr.as_binop->lhs.type) {
@@ -110,4 +112,4 @@ if (rhs.type == lhs.type) {
 ```
 
 ## headers
-headers should use `#pragma once` instead of `#ifdef` guards.
+headers should use `#pragma once` instead of `#ifdef` guards, for better readability.
