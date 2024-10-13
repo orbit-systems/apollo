@@ -27,7 +27,7 @@ case 2:
 - use `snake_case` for variables, functions, and structure fields.
 - use `PascalCase` for new types.
 - use `SCREAMING_SNAKE_CASE` for `#define`'d constants and enums.
-- macros should also use this case, but some exceptions are made for utilities like `for_range`.
+- macros should also use this case, but some exceptions are made for keyword mods like `for_range` that supplement language features.
 
 ## comments
 prefer line comments (`// this`) in almost every case, except when a large
