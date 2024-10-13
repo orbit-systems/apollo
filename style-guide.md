@@ -113,4 +113,4 @@ if (rhs.type == lhs.type) {
 ```
 
 ## headers
-headers should use `#pragma once` instead of `#ifdef` guards, for better readability.
+headers should use `#pragma once` instead of `#ifdef` guards.
