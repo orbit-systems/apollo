@@ -58,9 +58,9 @@ typedef struct MyStructType MyStructType;
 ```
 
 ### enums
-only use `enum` to declare constants. to store the enum, use a defined-size integer type, especially in data structures.
+when storing an enum in a data structure, ***always*** use a sized integer type.
 
-Although not required, enums may have a type name for a better debugging experience.
+Although not required, enums may have a type name for a better experience in debuggers like GDB.
 ```c
 enum TokenKind {
     TOKEN_PLUS,
@@ -69,7 +69,8 @@ enum TokenKind {
 };
 
 typedef struct Token {
-    u8 kind;
+    // not TokenKind, cause sizeof(TokenKind) == sizeof(int), which wastes space
+    u8 kind; 
     // ...
 } Token;
 ```
