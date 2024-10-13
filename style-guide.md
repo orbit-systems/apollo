@@ -25,8 +25,8 @@ case 2:
 
 ## case
 - use `snake_case` for variables, functions, and structure fields.
-- use `PascalCase` for custom types.
-- use `SCREAMING_SNAKE_CASE` for `#define`d constants and enums.
+- use `PascalCase` for new types.
+- use `SCREAMING_SNAKE_CASE` for `#define`'d constants and enums.
 - macros should also use this case, but some exceptions are made for utilities like `for_range`.
 
 ## comments
