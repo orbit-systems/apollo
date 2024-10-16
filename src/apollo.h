@@ -16,33 +16,31 @@ typedef intptr_t isize;
 typedef uintptr_t usize;
 
 /*
-
  - HEADER
+ - SECTION INFO TABLE
  - SYMBOL TABLE
  - REFERENCE TABLE
- - SECTION INFO TABLE
- - SECTION POOL - 
+ - SECTION POOL
  - STRING POOL - null-terminated string bytes
-
 */
 
 typedef struct ApoHeader {
-    u8 magic[4];       // {0xF0, 'A', 'P', 'O'}
-    u32 version;       // apollo version ID: currently 1
-    u64 exec_symbol;   // symbol index to begin execution at, if relevant
-    u32 sym_table_len; // offset = HEADER_SIZE
-    u32 ref_table_len; // offset = HEADER_SIZE + SYMBOL_SIZE * .sym_table_len
-    u32 sec_info_len;  // offset = HEADER_SIZE + SYMBOL_SIZE * .sym_table_len + REF_SIZE * .ref_table_len
-    u32 sec_pool_size; // offset = HEADER_SIZE + SYMBOL_SIZE * .sym_table_len + REF_SIZE * .ref_table_len + SEC_INFO_SIZE * .sec_info_len
-    u32 str_pool_size; // offset = HEADER_SIZE + SYMBOL_SIZE * .sym_table_len + REF_SIZE * .ref_table_len + SEC_INFO_SIZE * .sec_info_len + sec_pool_size
-    u64 _reserved[2]; // reserved for later use
+    u8 magic[4];     // {0xB2, 'a', 'p', 'o'}
+    u32 version;     // apollo version ID: currently 1
+    u64 exec_symbol; // symbol index to begin execution at, if relevant.
+                     // APO_SYM_NULL if not
+    u32 sec_info_len;
+    u32 sym_table_len;
+    u64 ref_table_len;
+    u64 sec_pool_size;
+    u64 str_pool_size;
 } ApoHeader;
 
 enum ApoSectionKind {
-    APO_SEC_KIND_CODE = 0,  // executable
-    APO_SEC_KIND_DATA = 1,  // readable and writeable
-    APO_SEC_KIND_BLANK = 2, // like data, except it doesn't actually get stored,
-                            // just loaded in filled with zero.
+    APO_SEC_KIND_CODE = 0,   // executable
+    APO_SEC_KIND_DATA = 1,   // readable and writeable
+    APO_SEC_KIND_BLANK = 2,  // like data, except it doesn't actually get stored,
+                             // just loaded in filled with zero.
     APO_SEC_KIND_RODATA = 3, // only readable
 };
 
@@ -108,10 +106,10 @@ enum ApoReferenceKind {
 /*
     all references (called relocations in other media) are stored in a large
     table, where all references made in a section are contained in a single
-   slice of the table.
+    slice of the table.
 */
 
-// (symbol.value + addend + (ip_relative ? -($ + 4) : 0)) >> shift_left
+// = (symbol.value + addend + (ip_relative ? -($ + 4) : 0)) >> shift_left
 typedef struct ApoReference {
     // what symbol was referenced?
     u32 symbol_index;
@@ -120,20 +118,17 @@ typedef struct ApoReference {
     // what kind of reference is this?
     u8 kind;
     // value computation components
-    i8 addend;
     u8 shift_left;
     bool ip_relative;
-    u32 addend;
+    i32 addend;
 } ApoReference;
 
-enum {
-    HEADER_SIZE = sizeof(ApoHeader),
-    SYMBOL_SIZE = sizeof(ApoSymbol),
-    REF_SIZE = sizeof(ApoReference),
-    SEC_INFO_SIZE = sizeof(ApoSectionInfo),
+#define HEADER_SIZE sizeof(ApoHeader)
+#define SYMBOL_SIZE sizeof(ApoSymbol)
+#define REF_SIZE sizeof(ApoReference)
+#define SEC_INFO_SIZE sizeof(ApoSectionInfo)
 
-    HEADER_ALIGN = alignof(ApoHeader),
-    SYMBOL_ALIGN = alignof(ApoSymbol),
-    REF_ALIGN = alignof(ApoReference),
-    SECINFO_ALIGN = alignof(ApoSectionInfo),
-};
+#define HEADER_ALIGN alignof(ApoHeader)
+#define SYMBOL_ALIGN alignof(ApoSymbol)
+#define REF_ALIGN alignof(ApoReference)
+#define SEC_INFO_ALIGN alignof(ApoSectionInfo)

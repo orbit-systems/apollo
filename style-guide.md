@@ -10,6 +10,10 @@ if (x == y) return 1;
 if (x == y) {
     return 1;
 }
+
+// no
+if (x == y)
+    return 1;
 ```
 
 `case`s should match the level of their enclosing `switch`:
@@ -27,7 +31,7 @@ case 2:
 - use `snake_case` for variables, functions, and structure fields.
 - use `PascalCase` for new types.
 - use `SCREAMING_SNAKE_CASE` for `#define`'d constants and enums.
-- macros should also use this case, but some exceptions are made for keyword mods like `for_range` that supplement language features, or for inline function spoofing
+- macros should also use this case, but some exceptions are made for keyword mods like `for_range` that supplement language features, or inline function spoofing
 
 ## comments
 prefer line comments (`// this`) in almost every case, except when a large
@@ -35,7 +39,7 @@ multi-line description is needed.
 
 
 ## types
-use `orbit.h` defined base types whenever possible, especially in data structures.
+use `orbit.h` defined types whenever possible, especially in data structures.
 ```rs
 i8, i16, i32, i64, isize // integers
 u8, u16, u32, u64, usize // unsigned integers
@@ -47,14 +51,14 @@ when the size of an integer doesn't matter, prefer `isize` and `usize` over `int
 ### structs
 when declaring a struct type, use typedef and include the name in the struct definition:
 ```c
-typedef struct MyStructType {
+typedef struct MyStruct {
     // ...
-} MyStructType;
+} MyStruct;
 ```
 
 if it's necessary to refer to that type before the definition is available/complete, use a predeclaration:
 ```c
-typedef struct MyStructType MyStructType;
+typedef struct MyStruct MyStruct;
 ```
 
 ### enums
@@ -71,7 +75,6 @@ enum TokenKind {
 typedef struct Token {
     // not TokenKind, cause sizeof(TokenKind) == sizeof(int), which wastes space
     u8 kind; 
-    // ...
 } Token;
 ```
 
@@ -84,7 +87,7 @@ void modify(int* ptr);
 ```
 
 ## declarations & assignments
-never declare or set more than one variable in a declaration statement.
+never declare or set more than one variable in a single statement.
 ```c
 // nuh uh
 int x, y, z = 1;
